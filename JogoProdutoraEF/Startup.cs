@@ -9,6 +9,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
 using JogoProdutoraEF.Data;
+using JogoProdutoraEF.Data.Repositories;
+using JogoProdutoraEF.Domain.Model.Interfaces.Repositories;
+using JogoProdutoraEF.Domain.Model.Interfaces.Services;
+using JogoProdutoraEF.Domain.Service.Services;
+using JogoProdutoraEF.InversionOfControl;
 
 namespace JogoProdutoraEF
 {
@@ -26,8 +31,7 @@ namespace JogoProdutoraEF
         {
             services.AddControllersWithViews();
 
-            services.AddDbContext<JogoProdutoraContext>(options =>
-                    options.UseSqlServer(Configuration.GetConnectionString("JogoProdutoraContext")));
+            DependecyInjection.Register(services, Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,6 +45,7 @@ namespace JogoProdutoraEF
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
             app.UseStaticFiles();
 
             app.UseRouting();

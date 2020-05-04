@@ -6,23 +6,26 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JogoProdutoraEF.Data;
+using JogoProdutoraEF.Domain.Model.Interfaces.Services;
 using JogoProdutoraEF.Models;
+using JogoProdutoraEF.Domain.Models;
 
 namespace JogoProdutoraEF.Controllers
 {
     public class JogoController : Controller
     {
+        private readonly IJogoService _jogoService;
         private readonly JogoProdutoraContext _context;
 
-        public JogoController(JogoProdutoraContext context)
+        public JogoController(IJogoService jogoService)
         {
-            _context = context;
+            _jogoService = jogoService;
         }
 
         // GET: Jogo
         public async Task<IActionResult> Index()
         {
-            return View(await _context.JogoModel.ToListAsync());
+            return View(await _jogoService.GetAllAsync());
         }
 
         // GET: Jogo/Details/5
@@ -33,8 +36,7 @@ namespace JogoProdutoraEF.Controllers
                 return NotFound();
             }
 
-            var jogoModel = await _context.JogoModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var jogoModel = await _jogoService.GetByIdAsync(id.Value);
             if (jogoModel == null)
             {
                 return NotFound();
@@ -50,18 +52,16 @@ namespace JogoProdutoraEF.Controllers
         }
 
         // POST: Jogo/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Nome,Lancamento")] JogoModel jogoModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(jogoModel);
-                await _context.SaveChangesAsync();
+                await _jogoService.InsertAsync(jogoModel);
                 return RedirectToAction(nameof(Index));
             }
+
             return View(jogoModel);
         }
 
@@ -73,22 +73,21 @@ namespace JogoProdutoraEF.Controllers
                 return NotFound();
             }
 
-            var jogoModel = await _context.JogoModel.FindAsync(id);
+            var jogoModel = await _jogoService.GetByIdAsync(id.Value);
             if (jogoModel == null)
             {
                 return NotFound();
             }
+
             return View(jogoModel);
         }
 
         // POST: Jogo/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Lancamento")] JogoModel jogoModel)
         {
-            if (id != jogoModel.Id)
+            if (id == null)
             {
                 return NotFound();
             }
@@ -97,12 +96,11 @@ namespace JogoProdutoraEF.Controllers
             {
                 try
                 {
-                    _context.Update(jogoModel);
-                    await _context.SaveChangesAsync();
+                    await _jogoService.UpdateAsync(jogoModel);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!JogoModelExists(jogoModel.Id))
+                    if (await _jogoService.GetByIdAsync(id) == null)
                     {
                         return NotFound();
                     }
@@ -111,8 +109,10 @@ namespace JogoProdutoraEF.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
+
             return View(jogoModel);
         }
 
@@ -124,8 +124,7 @@ namespace JogoProdutoraEF.Controllers
                 return NotFound();
             }
 
-            var jogoModel = await _context.JogoModel
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var jogoModel = await _jogoService.GetByIdAsync(id.Value);
             if (jogoModel == null)
             {
                 return NotFound();
@@ -139,15 +138,13 @@ namespace JogoProdutoraEF.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var jogoModel = await _context.JogoModel.FindAsync(id);
-            _context.JogoModel.Remove(jogoModel);
-            await _context.SaveChangesAsync();
+            await _jogoService.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
         private bool JogoModelExists(int id)
         {
-            return _context.JogoModel.Any(e => e.Id == id);
+            return _context.Jogos.Any(e => e.Id == id);
         }
     }
 }

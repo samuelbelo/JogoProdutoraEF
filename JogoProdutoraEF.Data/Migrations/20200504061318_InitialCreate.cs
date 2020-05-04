@@ -1,14 +1,14 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace JogoProdutoraEF.Migrations
+namespace JogoProdutoraEF.Data.Migrations
 {
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "JogoModel",
+                name: "Jogos",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
@@ -18,14 +18,14 @@ namespace JogoProdutoraEF.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_JogoModel", x => x.Id);
+                    table.PrimaryKey("PK_Jogos", x => x.Id);
                 });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "JogoModel");
+                name: "Jogos");
         }
     }
 }

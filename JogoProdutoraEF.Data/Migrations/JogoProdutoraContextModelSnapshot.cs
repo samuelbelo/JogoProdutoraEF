@@ -4,24 +4,22 @@ using JogoProdutoraEF.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace JogoProdutoraEF.Migrations
+namespace JogoProdutoraEF.Data.Migrations
 {
     [DbContext(typeof(JogoProdutoraContext))]
-    [Migration("20200415112233_InitialCreate")]
-    partial class InitialCreate
+    partial class JogoProdutoraContextModelSnapshot : ModelSnapshot
     {
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.1.0-preview1.19506.2")
+                .HasAnnotation("ProductVersion", "3.1.3")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("JogoProdutoraEF.Models.JogoModel", b =>
+            modelBuilder.Entity("JogoProdutoraEF.Domain.Models.JogoModel", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -36,7 +34,7 @@ namespace JogoProdutoraEF.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("JogoModel");
+                    b.ToTable("Jogos");
                 });
 #pragma warning restore 612, 618
         }
